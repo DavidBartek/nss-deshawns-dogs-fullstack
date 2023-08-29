@@ -1,7 +1,8 @@
 # DeShawn's Dog Walking
-**Add your ERD here**
 
-`Table dogs {
+**ERD**
+
+Table dogs {
   id int pk
   name varchar
   cityId varchar
@@ -26,9 +27,6 @@ Table walkersToCities {
 
 
 Ref: "walkers"."id" < "dogs"."walkerId"
-
 Ref: "cities"."id" < "dogs"."cityId"
-
 Ref: "walkers"."id" < "walkersToCities"."walkerId"
-
 Ref: "cities"."id" < "walkersToCities"."cityId"`
