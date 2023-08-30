@@ -20,3 +20,13 @@ export const getWalkers = async () => {
   const data = res.json();
   return data;
 }
+
+export const postDog = async (newDog) => {
+  await fetch(`/dogs`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newDog)
+  });
+}

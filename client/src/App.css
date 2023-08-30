@@ -36,3 +36,37 @@
     transform: rotate(360deg);
   }
 }
+
+.doglist-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.doglist {
+  max-width: fit-content;
+  min-width: 400px;
+}
+
+.newDogButton {
+  margin: 10px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.newDogForm {
+  max-width: fit-content;
+}
+
+.newDogForm--header {
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+}
