@@ -30,3 +30,9 @@ export const postDog = async (newDog) => {
     body: JSON.stringify(newDog)
   });
 }
+
+export const deleteDog = async (dogId) => {
+  await fetch(`/dogs/${dogId}`, {
+    method: "DELETE"
+  })
+}

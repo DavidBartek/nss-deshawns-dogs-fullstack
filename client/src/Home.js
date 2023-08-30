@@ -1,5 +1,5 @@
-import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Button } from "reactstrap";
-import { getCities, getDogs, getWalkers } from "./apiManager";
+import { Accordion, AccordionBody, AccordionHeader, AccordionItem, Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { deleteDog, getCities, getDogs, getWalkers } from "./apiManager";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,9 @@ export default function Home() {
   const [dogs, setDogs] = useState([]);
   const [cities, setCities] = useState([]);
   const [walkers, setWalkers] = useState([]);
+  const [dogToDestroy, setDogToDestroy] = useState(null);
   const [open, setOpen] = useState("-1");
+  const [modal, setModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -28,6 +30,12 @@ export default function Home() {
         })
   }, []);
 
+  useEffect(
+    () => {
+      getDogs()
+    }, [dogs]
+  )
+
   const toggle = (id) => {
     if (open === id) {
       setOpen("-1");
@@ -40,11 +48,25 @@ export default function Home() {
     navigate("/dogs/addDog")
   }
 
+  const toggleModal = () => setModal(!modal);
+
+  const handleCancelDestroy = () => {
+    toggleModal(false);
+  }
+
+  const handleDestroyDog = () => {
+    console.log(dogToDestroy);
+    deleteDog(dogToDestroy);
+    toggleModal(false);
+    setDogs(prevDogs => prevDogs.filter(dog => dog.id !== dogToDestroy));
+    setOpen("-1");
+  }
 
   if (!dogs) {
     return null;
   } else {
     return (
+      <>
       <div className="doglist-container">
         <div className="doglist">
           <h2>OUR DOGS</h2>
@@ -75,7 +97,12 @@ export default function Home() {
               return (
               <AccordionItem key={index}>
                 <AccordionHeader targetId={index.toString()}>{dog.name}</AccordionHeader>
-                <AccordionBody accordionId={index.toString()}>{dog.name} lives in {cityString} and is assigned to {walkerString}</AccordionBody>
+                <AccordionBody accordionId={index.toString()}>
+                  {dog.name} lives in {cityString} and is assigned to {walkerString}<br />
+                  <Button color="danger" onClick={(e) => {
+                    toggleModal();
+                    setDogToDestroy(dog.id)}}>DESTROY DOG 🐕‍🦺</Button>
+                </AccordionBody>
               </AccordionItem>
               )
             })}
@@ -94,6 +121,18 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Modal isOpen={modal} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}>Are you sure?</ModalHeader>
+        <ModalFooter>
+            <Button color="danger" onClick={handleDestroyDog}>
+                Yes, destroy
+            </Button>
+            <Button color="secondary" onClick={handleCancelDestroy}>
+                nvm lol
+            </Button>
+        </ModalFooter>
+      </Modal>
+      </>
     )
   }
 }

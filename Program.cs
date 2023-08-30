@@ -95,4 +95,19 @@ app.MapPost("/dogs", (Dog newDog) =>
     return newDog;
 });
 
+app.MapDelete("/dogs/{id}", (int id) =>
+{
+    Dog dogToDestroy = dogs.FirstOrDefault(dog => dog.Id == id);
+    Console.WriteLine(dogToDestroy.Name);
+    Console.WriteLine(dogToDestroy.Id);
+    if (dogToDestroy == null)
+    {
+        return Results.NotFound();
+    }
+    // the below LINQ method (.RemoveAt) will occasionally return errors. It finds by index, when we have been doing operations by Id.
+    // dogs.RemoveAt(id - 1);
+    dogs.RemoveAll(dog => dog.Id == dogToDestroy.Id);
+    return Results.Ok();
+});
+
 app.Run();
