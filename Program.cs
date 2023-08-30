@@ -3,20 +3,20 @@ using DeShawnsDogs.Models;
 List<Dog> dogs = new List<Dog>
 {
     new Dog { Id = 1, Name = "Fido", CityId = 1, WalkerId = 1 },
-    new Dog { Id = 2, Name = "Buddy", CityId = 2, WalkerId = 2 },
+    new Dog { Id = 2, Name = "Buddy", CityId = 2},
     new Dog { Id = 3, Name = "Charlie", CityId = 3, WalkerId = 3 },
-    new Dog { Id = 4, Name = "Max", CityId = 1, WalkerId = 4 },
+    new Dog { Id = 4, Name = "Max", CityId = 1 },
     new Dog { Id = 5, Name = "Cooper", CityId = 2, WalkerId = 5 },
     new Dog { Id = 6, Name = "Rocky", CityId = 3, WalkerId = 1 },
-    new Dog { Id = 7, Name = "Bella", CityId = 1, WalkerId = 2 },
+    new Dog { Id = 7, Name = "Bella", CityId = 1 },
     new Dog { Id = 8, Name = "Lucy", CityId = 2, WalkerId = 3 },
     new Dog { Id = 9, Name = "Lola", CityId = 3, WalkerId = 4 },
     new Dog { Id = 10, Name = "Daisy", CityId = 1, WalkerId = 3 },
-    new Dog { Id = 11, Name = "Luna", CityId = 3, WalkerId = 2 },
+    new Dog { Id = 11, Name = "Luna", CityId = 3 },
     new Dog { Id = 12, Name = "Bailey", CityId = 1, WalkerId = 5 },
     new Dog { Id = 13, Name = "Rocky", CityId = 2, WalkerId = 1 },
     new Dog { Id = 14, Name = "Oliver", CityId = 3, WalkerId = 4 },
-    new Dog { Id = 15, Name = "Leo", CityId = 1, WalkerId = 2 }
+    new Dog { Id = 15, Name = "Leo", CityId = 1 }
 };
 
 List<City> cities = new List<City>
@@ -75,6 +75,16 @@ app.MapGet("/api/hello", () =>
 app.MapGet("/dogs", () =>
 {
     return dogs;
+});
+
+app.MapGet("/cities", () =>
+{
+    return cities;
+});
+
+app.MapGet("/walkers", () =>
+{
+    return walkers;
 });
 
 app.Run();
