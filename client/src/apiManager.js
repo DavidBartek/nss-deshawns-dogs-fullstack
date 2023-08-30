@@ -8,3 +8,15 @@ export const getDogs = async () => {
   const data = res.json();
   return data;
 }
+
+export const getCities = async () => {
+  const res = await fetch(`/cities`);
+  const data = res.json();
+  return data;
+}
+
+export const getWalkers = async () => {
+  const res = await fetch(`/walkers`);
+  const data = res.json();
+  return data;
+}
