@@ -8,12 +8,12 @@ export const TopNavBar = () => {
     
     return (
         <Navbar color="light" expand="md">
-            <NavbarBrand href="/" className="me-auto">🐕‍🦺 🐩 DeShawn's Dog Walking</NavbarBrand>
+            <NavbarBrand href="/dogs" className="me-auto">🐕‍🦺 🐩 DeShawn's Dog Walking</NavbarBrand>
             <NavbarToggler onClick={toggleNavbar} className="me-2" />
             <Collapse isOpen={!collapsed} navbar>
                 <Nav navbar>
                     <NavItem>
-                        <NavLink href="/">Dogs</NavLink>
+                        <NavLink href="/dogs">Dogs</NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink href="/walkers">Walkers</NavLink>

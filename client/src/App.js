@@ -6,7 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import { ApplicationRoutes } from "./ApplicationRoutes";
 
 function App() {
-  
+
   return (
     <Routes>
       <Route path="*" element={
