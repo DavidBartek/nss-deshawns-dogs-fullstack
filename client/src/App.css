@@ -70,3 +70,33 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+.walkers-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.selectCity-form {
+  display: flex;
+  justify-content: center;
+}
+
+.selectCity-input {
+  max-width: fit-content;
+}
+
+.walker-container {
+  margin-bottom: 10px;
+}
+
+.assignDog-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.assignButton {
+  margin-right: 20px;
+}

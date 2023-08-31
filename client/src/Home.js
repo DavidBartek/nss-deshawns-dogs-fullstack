@@ -55,7 +55,7 @@ export default function Home() {
   }
 
   const handleDestroyDog = () => {
-    console.log(dogToDestroy);
+    // console.log(dogToDestroy);
     deleteDog(dogToDestroy);
     toggleModal(false);
     setDogs(prevDogs => prevDogs.filter(dog => dog.id !== dogToDestroy));

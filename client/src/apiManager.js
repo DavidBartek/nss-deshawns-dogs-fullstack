@@ -27,6 +27,12 @@ export const getFilteredWalkers = async (cityId) => {
   return data;
 }
 
+export const getFilteredDogs = async (walkerId) => {
+  const res = await fetch(`/filteredDogs/${walkerId}`);
+  const data = res.json();
+  return data;
+}
+
 export const postDog = async (newDog) => {
   await fetch(`/dogs`, {
     method: "POST",
@@ -35,6 +41,16 @@ export const postDog = async (newDog) => {
     },
     body: JSON.stringify(newDog)
   });
+}
+
+export const postAssignWalker = async (dogId, walkerId) => {
+  await fetch(`/dogs/${dogId}/assignWalker${walkerId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dogId, walkerId)
+  })
 }
 
 export const deleteDog = async (dogId) => {
