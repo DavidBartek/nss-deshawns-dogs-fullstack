@@ -86,6 +86,19 @@ app.MapGet("/walkers", () =>
     return walkers;
 });
 
+app.MapGet("/walkers/{walkerId}", (int walkerId) =>
+{
+    Walker foundWalker = walkers.FirstOrDefault(w => w.Id == walkerId);
+    if (foundWalker == null)
+    {
+        return Results.NotFound();
+    }
+    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.WalkerId == walkerId).ToList();
+    List<City> filteredCities = filteredWalkersToCities.Select(fwtc => cities.First(c => c.Id == fwtc.CityId)).ToList();
+    foundWalker.Cities = filteredCities;
+    return Results.Ok(foundWalker);
+});
+
 // single cityId passed in.
 // filter walkersToCities by objects which include cityId; return filteredWalkersToCities
 // construct list of filteredWalkers based on walkerIds present in each filteredWalkersToCities object; return filteredWalkers (assign this to "Walkers" prop)
@@ -134,6 +147,20 @@ app.MapPost("/dogs/{dogId}/assignWalker{walkerId}", (int dogId, int walkerId) =>
     foundDog.WalkerId = walkerId;
 
     return foundDog;
+});
+
+app.MapPut("/walkers/{walkerId}", (Walker walker) =>
+{
+    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.WalkerId != walker.Id).ToList();
+    foreach (City city in walker.Cities)
+    {
+        WalkerToCity newWTC = new WalkerToCity
+        {
+            WalkerId = walker.Id,
+            CityId = city.Id
+        };
+        newWTC.Id = walker
+    }
 });
 
 app.MapDelete("/dogs/{id}", (int id) =>

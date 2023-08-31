@@ -86,8 +86,19 @@
   max-width: fit-content;
 }
 
+.walkersList-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .walker-container {
   margin-bottom: 10px;
+}
+
+.walkerName:hover {
+  font-weight: 900;
+  cursor: pointer;
 }
 
 .assignDog-container {
