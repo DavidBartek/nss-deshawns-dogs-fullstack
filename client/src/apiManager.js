@@ -21,6 +21,12 @@ export const getWalkers = async () => {
   return data;
 }
 
+export const getFilteredWalkers = async (cityId) => {
+  const res = await fetch(`/filteredWalkers/${cityId}`);
+  const data = res.json();
+  return data;
+}
+
 export const postDog = async (newDog) => {
   await fetch(`/dogs`, {
     method: "POST",

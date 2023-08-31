@@ -48,7 +48,6 @@ List<WalkerToCity> walkersToCities = new List<WalkerToCity>
     new WalkerToCity { Id = 9, WalkerId = 4, CityId = 2 }
 };
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -86,6 +85,17 @@ app.MapGet("/walkers", () =>
 {
     return walkers;
 });
+
+app.MapGet("/filteredWalkers/{cityId}", (int cityId) => 
+{
+    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.CityId == cityId).ToList();
+    List<Walker> filteredWalkers = filteredWalkersToCities.Select(fwtc => walkers.First(w => w.Id == fwtc.WalkerId)).ToList();
+    return filteredWalkers;
+});
+
+// single cityId passed in.
+// filter walkersToCities by objects which include cityId; return filteredWalkersToCities
+// construct list of filteredWalkers based on walkerIds present in each filteredWalkersToCities object; return filteredWalkers (assign this to "Walkers" prop)
 
 app.MapPost("/dogs", (Dog newDog) =>
 {
