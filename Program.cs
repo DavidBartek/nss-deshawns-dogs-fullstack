@@ -86,6 +86,10 @@ app.MapGet("/walkers", () =>
     return walkers;
 });
 
+// single cityId passed in.
+// filter walkersToCities by objects which include cityId; return filteredWalkersToCities
+// construct list of filteredWalkers based on walkerIds present in each filteredWalkersToCities object; return filteredWalkers (assign this to "Walkers" prop)
+
 app.MapGet("/filteredWalkers/{cityId}", (int cityId) => 
 {
     List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.CityId == cityId).ToList();
@@ -93,9 +97,22 @@ app.MapGet("/filteredWalkers/{cityId}", (int cityId) =>
     return filteredWalkers;
 });
 
-// single cityId passed in.
-// filter walkersToCities by objects which include cityId; return filteredWalkersToCities
-// construct list of filteredWalkers based on walkerIds present in each filteredWalkersToCities object; return filteredWalkers (assign this to "Walkers" prop)
+// match selected walker name to a walker Id (captured in client, sent to server).
+// filter walkersToCities by walker Id. Return filteredWTC.
+// filter cities by city IDs in filteredWTC. return filteredCities.
+// filter dogs by cityIds present in filteredCities AND walkerId == null. return filteredDogs to client.
+// map over filteredDogs (in client).
+
+app.MapGet("/filteredDogs/{walkerId}", (int walkerId) =>
+{
+    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.WalkerId == walkerId).ToList();
+    // return filteredWalkersToCities;
+    List<City> filteredCities = filteredWalkersToCities.Select(fwtc => cities.First(c => c.Id == fwtc.CityId)).ToList();
+    // return filteredCities;
+    List<Dog> filteredDogs = dogs.Where(d => filteredCities.Any(fc => d.CityId == fc.Id && d.WalkerId == null)).ToList();
+    // List<Dog> filteredDogs = filteredCities.Select(fc => dogs.Where(d => d.CityId == fc.Id));
+    return filteredDogs;
+});
 
 app.MapPost("/dogs", (Dog newDog) =>
 {
