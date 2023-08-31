@@ -122,6 +122,20 @@ app.MapPost("/dogs", (Dog newDog) =>
     return newDog;
 });
 
+// in Program.cs: cf the "POST" (acting as a "PUT")
+// pass in dogId, walkerId
+// access existing dog by its ID (FirstOrDefault)
+// new body: same + walkerId = foundWalker.id
+// return new dog object
+
+app.MapPost("/dogs/{dogId}/assignWalker{walkerId}", (int dogId, int walkerId) =>
+{
+    Dog foundDog = dogs.FirstOrDefault(d => d.Id == dogId);
+    foundDog.WalkerId = walkerId;
+
+    return foundDog;
+});
+
 app.MapDelete("/dogs/{id}", (int id) =>
 {
     Dog dogToDestroy = dogs.FirstOrDefault(dog => dog.Id == id);

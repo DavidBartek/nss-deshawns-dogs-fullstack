@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFilteredDogs } from "./apiManager";
+import { getFilteredDogs, postAssignWalker } from "./apiManager";
 import { Button } from "reactstrap";
 
 export const AssignDog = ( {selectedWalker, walkers, setSelectedDog, toggleOffCanvas, toggleModal } ) => {
@@ -19,14 +19,7 @@ export const AssignDog = ( {selectedWalker, walkers, setSelectedDog, toggleOffCa
     const handleAssign = (dogName, dogId) => {
         const foundWalker = walkers.find(walker => walker.name === selectedWalker);
         setSelectedDog(dogName)
-        
-        // in Program.cs: cf the "POST" acting as a "PUT"\
-        // pass in dogId
-        // access existing dog by its ID (FirstOrDefault)
-        // new body: same + walkerId = foundWalker.id
-        // return new dog object
-        
-        // POST operations here
+        postAssignWalker(dogId, foundWalker.id);
         toggleModal();
         toggleOffCanvas();
     }
