@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCities, getOneWalker } from "./apiManager";
-import { Button, Form, FormGroup, Input, Label } from "reactstrap";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 export const EditWalker = () => {
     const [walker, setWalker] = useState({});
     const [allCities, setAllCities] = useState([]);
     const [updatedWalkerName, setUpdatedWalkerName] = useState("");
     const [updatedWalkerCities, setUpdatedWalkerCities] = useState([]);
+    const [modal, setModal] = useState(false);
    
     const navigate = useNavigate();
     const params = useParams();
@@ -18,6 +19,7 @@ export const EditWalker = () => {
             .then((walkerData) => {
                 setWalker(walkerData);
                 setUpdatedWalkerCities(walkerData.cities);
+                console.log(`filtered Cities:`);
                 console.log(walkerData.cities);
             })
         getCities()
@@ -27,7 +29,39 @@ export const EditWalker = () => {
             })
     }, [])
 
+    const handleRemoveCheckbox = (cityId) => {
+        setUpdatedWalkerCities(prevCities => prevCities.filter(obj => obj.id !== cityId));
+    }
+
+    const handleAddCheckbox = (cityId, cityName) => {
+        setUpdatedWalkerCities(prevCities => [...prevCities, {
+            id: cityId,
+            name: cityName
+        }]);
+    }
+
+    useEffect(() => {
+        getCities()
+        .then((cityData) => {
+            setAllCities(cityData);
+            // console.log(data);
+        }) 
+    }, [updatedWalkerCities])
+
     const handleGoBack = () => {
+        navigate("/walkers");
+    }
+
+    const toggleModal = () => setModal(!modal);
+
+    const handleCancelSubmit = () => {
+        toggleModal(false);
+    }
+
+    const handleSubmitWalkerEdits = () => {
+        
+        // PUT operations
+        toggleModal(false);
         navigate("/walkers");
     }
 
@@ -50,32 +84,23 @@ export const EditWalker = () => {
                     />
                 </FormGroup>
                 {allCities.map(c => {
-                    // console.log(c.id);
-                    // console.log(walker.cities);
-                    let isChecked = null;
-                    for (const city of updatedWalkerCities) {
-                        console.log(`walker city id: ${city.id}`)
-                        if (city.id === c.id) {
-                            isChecked = true;
-                        } else if (city.id !== c.id) {
-                            isChecked = false;
-                        }
-                    }
-                    // const isChecked = updatedWalkerCities.includes(c.id);
+                    // console.log("current city and its id:");
+                    // console.log(`${c.name} ${c.id}`)
+
+                    // console.log("cities which should be checked (should be the same as 'filtered cities'):");
+                    // console.log(updatedWalkerCities);
+                    
+                    const isChecked = updatedWalkerCities.some(city => city.id === c.id);
                     // console.log(isChecked);
+                    
                     if (isChecked) {
                         return <FormGroup check inline key={"city--" + c.id}>
                             <Input
                                 id="cityCheckbox"
                                 type="checkbox"
                                 checked
-                                onChange={(e) => {
-                                    const cityId = c.id;
-                                    if (e.target.checked) {
-                                        setUpdatedWalkerCities(prevCities => [...prevCities, cityId]);
-                                    } else {
-                                        setUpdatedWalkerCities(prevCities => prevCities.filter(id => id !== cityId));
-                                    }
+                                onChange={() => {
+                                    handleRemoveCheckbox(c.id, c.name);
                                 }}
                             />
                             {' '}
@@ -86,20 +111,15 @@ export const EditWalker = () => {
                     } else if (!isChecked) {
                         return <FormGroup check inline key={"city--" + c.id}>
                             <Input
-                                id="cityCheckbox"
+                                id={`cityCheckbox-${c.id}`}
                                 type="checkbox"
-                                onChange={(e) => {
-                                    const cityId = c.id;
-                                    if (e.target.checked) {
-                                        setUpdatedWalkerCities(prevCities => [...prevCities, cityId]);
-                                    } else {
-                                        setUpdatedWalkerCities(prevCities => prevCities.filter(id => id !== cityId));
-                                    }
+                                onChange={() => {
+                                    handleAddCheckbox(c.id, c.name);
                                 }}
                             />
                             {' '}
-                            <Label check for="cityCheckbox">
-                            {c.name}
+                            <Label check for={`cityCheckbox-${c.id}`}>
+                                {c.name}
                             </Label>
                         </FormGroup>
                     }
@@ -114,13 +134,28 @@ export const EditWalker = () => {
                         Go Back
                     </Button>
                     <Button
-                        color="primary"
-                        // onClick={toggleModal}
+                        color="danger"
+                        onClick={toggleModal}
                     >
-                        Submit Dog
+                        Submit Changes
                     </Button>
                 </div>
             </Form>
+            <Modal isOpen={modal} toggle={toggleModal}>
+                <ModalHeader toggle={toggleModal}>Confirm these changes?</ModalHeader>
+                <ModalBody>
+                    Walker's Name: <strong>{updatedWalkerName ? updatedWalkerName : walker.name}</strong> <br />      
+                    Cities: <strong>{updatedWalkerCities.length === 0 ? "no assigned cities" : updatedWalkerCities.map(city => `${city.name} `)}</strong>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="secondary" onClick={handleCancelSubmit}>
+                        Nah dog lol
+                    </Button>
+                    <Button color="danger" onClick={handleSubmitWalkerEdits}>
+                        Yes
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </>
     )
 }

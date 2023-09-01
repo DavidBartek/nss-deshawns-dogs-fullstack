@@ -157,9 +157,11 @@ app.MapPut("/walkers/{walkerId}", (Walker walker) =>
         WalkerToCity newWTC = new WalkerToCity
         {
             WalkerId = walker.Id,
-            CityId = city.Id
+            CityId = city.Id,
+            Id = walkersToCities.Count > 0 ? walkersToCities.Max(wtc => wtc.Id) + 1 : 1
         };
-        newWTC.Id = walker
+        walkersToCities.Add(newWTC);
+        return newWTC;
     }
 });
 
