@@ -6,16 +6,16 @@ List<Dog> dogs = new List<Dog>
     new Dog { Id = 2, Name = "Buddy", CityId = 2, WalkerId = null},
     new Dog { Id = 3, Name = "Charlie", CityId = 3, WalkerId = 3 },
     new Dog { Id = 4, Name = "Max", CityId = 1, WalkerId = null },
-    new Dog { Id = 5, Name = "Cooper", CityId = 2, WalkerId = 5 },
-    new Dog { Id = 6, Name = "Rocky", CityId = 3, WalkerId = 1 },
+    new Dog { Id = 5, Name = "Cooper", CityId = 2, WalkerId = 5 }, //
+    new Dog { Id = 6, Name = "Rocky", CityId = 2, WalkerId = 1 },
     new Dog { Id = 7, Name = "Bella", CityId = 1, WalkerId = null },
-    new Dog { Id = 8, Name = "Lucy", CityId = 2, WalkerId = 3 },
-    new Dog { Id = 9, Name = "Lola", CityId = 3, WalkerId = 4 },
+    new Dog { Id = 8, Name = "Lucy", CityId = 3, WalkerId = 3 },
+    new Dog { Id = 9, Name = "Lola", CityId = 2, WalkerId = 4 },
     new Dog { Id = 10, Name = "Daisy", CityId = 1, WalkerId = 3 },
     new Dog { Id = 11, Name = "Luna", CityId = 3, WalkerId = null },
-    new Dog { Id = 12, Name = "Bailey", CityId = 1, WalkerId = 5 },
+    new Dog { Id = 12, Name = "Bailey", CityId = 2, WalkerId = 5 }, //
     new Dog { Id = 13, Name = "Rocky", CityId = 2, WalkerId = 1 },
-    new Dog { Id = 14, Name = "Oliver", CityId = 3, WalkerId = 4 },
+    new Dog { Id = 14, Name = "Oliver", CityId = 1, WalkerId = 4 },
     new Dog { Id = 15, Name = "Leo", CityId = 1, WalkerId = null }
 };
 
@@ -28,11 +28,11 @@ List<City> cities = new List<City>
 
 List<Walker> walkers = new List<Walker>
 {
-    new Walker { Id = 1, Name = "Alice" },
-    new Walker { Id = 2, Name = "Bob" },
-    new Walker { Id = 3, Name = "Charlie" },
-    new Walker { Id = 4, Name = "David" },
-    new Walker { Id = 5, Name = "Eva" }
+    new Walker { Id = 1, Name = "Alice" }, // cities 1 and 2
+    new Walker { Id = 2, Name = "Bob" }, // cities 2 and 3
+    new Walker { Id = 3, Name = "Charlie" }, // cities 1 and 3
+    new Walker { Id = 4, Name = "David" }, // cities 1 and 2
+    new Walker { Id = 5, Name = "Eva" } // city 2
 };
 
 List<WalkerToCity> walkersToCities = new List<WalkerToCity>
@@ -171,12 +171,17 @@ app.MapGet("/walkers/{walkerId}", (int walkerId) =>
         // Id (generated)
     // adds newWTC to walkerToCities list (for as many relationships as were generated).
 //
-// 2: handles changes to walker's name. (easy - find by id, change property.)
-//
-// 3: handles changes to dogs containing walker's id.
-// iterate through dogs list: isolate dogs where walkerId == walker.Id (.Where)
-    // inside: iterate through walker.Cities list :
-        // if 
+// 2: handles changes to any dogs containing walker's id (if their city/ies changes).
+// create a filtered dogs list where dog.walkerId == walkerId (.Where)
+// iterate through filteredDogs; for each iteration, find if walker.cities list contains a matching cityId.
+    // if matchingCity == null: set dog.WalkerId = null.
+    // else: no change.
+// foundDogs list has now been modified to reflect the walker's now-assigned cities.
+// iterate through original dogs list, for each iterated dog, find and set equal the first dog in foundDogs with a matching Id.
+// dogs list now reflects any changes to cities made.
+
+// 3: handles changes to walker's name. (easy - find by id, change property.)
+
 
 app.MapPut("/walkers/{walkerId}", (int walkerId, Walker walker) =>
 {
@@ -192,9 +197,37 @@ app.MapPut("/walkers/{walkerId}", (int walkerId, Walker walker) =>
         };
         walkersToCities.Add(newWTC);
     }
+    
+    // modifies any dogs containing walkerId, if city was modified
+    List<Dog> foundDogs = dogs.Where(dog => dog.WalkerId == walker.Id).ToList();
+    foreach (Dog dog in foundDogs)
+    {
+        City matchingCity = walker.Cities.FirstOrDefault(c => c.Id == dog.CityId);
+        if (matchingCity == null)
+        {
+            Dog dogNoMatch = dogs.First(d => d.Id == dog.Id);
+            dogNoMatch.WalkerId = null;
+            // dogs = dogs.Select(d => foundDogs.First(foundDog => d.Id == foundDog.Id)).ToList()
+        }
+        else
+        {
+            dog.WalkerId = dog.WalkerId;
+        }
+    }
+    ;
+
     // modifies walker @ id (for any name change)
     Walker foundWalker = walkers.FirstOrDefault(w => w.Id == walker.Id);
-    foundWalker.Name = walker.Name;
+    if (walker.Name == "")
+    {
+        foundWalker.Name = foundWalker.Name;
+    }
+    else
+    {
+        foundWalker.Name = walker.Name;
+    }
+    
+
     return foundWalker;
 });
 
