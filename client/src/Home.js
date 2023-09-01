@@ -30,11 +30,11 @@ export default function Home() {
         })
   }, []);
 
-  useEffect(
-    () => {
-      getDogs()
-    }, [dogs]
-  )
+  // useEffect(
+  //   () => {
+  //     getDogs()
+  //   }, [dogs]
+  // )
 
   const toggle = (id) => {
     if (open === id) {

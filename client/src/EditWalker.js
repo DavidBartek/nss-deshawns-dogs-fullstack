@@ -19,8 +19,8 @@ export const EditWalker = () => {
             .then((walkerData) => {
                 setWalker(walkerData);
                 setUpdatedWalkerCities(walkerData.cities);
-                console.log(`filtered Cities:`);
-                console.log(walkerData.cities);
+                // console.log(`filtered Cities:`);
+                // console.log(walkerData.cities);
             })
         getCities()
             .then((cityData) => {
