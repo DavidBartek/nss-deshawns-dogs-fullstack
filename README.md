@@ -1,5 +1,8 @@
 # DeShawn's Dog Walking
 
+Full-stack CRUD app built with React front-end, C#/.NET Core API, and styled (minimally) using ReactStrap.
+
+
 **ERD**
 
 Table dogs {
