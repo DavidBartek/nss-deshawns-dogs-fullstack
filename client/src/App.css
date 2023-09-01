@@ -58,11 +58,15 @@
   margin-top: 20px;
 }
 
-.newDogForm {
+.newDogForm,
+.editWalkerForm,
+.newCityForm {
   max-width: fit-content;
 }
 
-.newDogForm--header {
+.newDogForm--header,
+.editWalkerForm--header,
+.newCityForm--header {
   margin-bottom: 20px;
 }
 

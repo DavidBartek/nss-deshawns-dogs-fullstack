@@ -107,8 +107,8 @@ app.MapPost("/dogs/{dogId}/assignWalker{walkerId}", (int dogId, int walkerId) =>
 app.MapDelete("/dogs/{id}", (int id) =>
 {
     Dog dogToDestroy = dogs.FirstOrDefault(dog => dog.Id == id);
-    Console.WriteLine(dogToDestroy.Name);
-    Console.WriteLine(dogToDestroy.Id);
+    // Console.WriteLine(dogToDestroy.Name);
+    // Console.WriteLine(dogToDestroy.Id);
     if (dogToDestroy == null)
     {
         return Results.NotFound();
@@ -139,6 +139,15 @@ app.MapGet("/filteredDogs/{walkerId}", (int walkerId) =>
 app.MapGet("/cities", () =>
 {
     return cities;
+});
+
+app.MapPost("/cities", (City newCity) =>
+{
+    newCity.Id = cities.Count > 0 ? cities.Max(d => d.Id) + 1 : 1;
+    
+    cities.Add(newCity);
+
+    return newCity;
 });
 
 app.MapGet("/walkers", () =>

@@ -75,93 +75,95 @@ export const EditWalker = () => {
         return null;
     }
     return (
-        <>
-            <h3>Edit Details for {walker.name}</h3>
-            <Form>
-                <FormGroup>
-                    <Label for="editWalker__Name">
-                        Name
-                    </Label>
-                    <Input
-                        id="editWalker__Name"
-                        placeholder={walker.name}
-                        value={updatedWalkerName}
-                        onChange={(e) => setUpdatedWalkerName(e.target.value)}
-                    />
-                </FormGroup>
-                {allCities.map(c => {
-                    // console.log("current city and its id:");
-                    // console.log(`${c.name} ${c.id}`)
+        <div className="form-container">
+            <div className="editWalkerForm">
+                <h3 className="editWalkerForm--header">Edit Details for {walker.name}</h3>
+                <Form>
+                    <FormGroup>
+                        <Label for="editWalker__Name">
+                            Name
+                        </Label>
+                        <Input
+                            id="editWalker__Name"
+                            placeholder={walker.name}
+                            value={updatedWalkerName}
+                            onChange={(e) => setUpdatedWalkerName(e.target.value)}
+                        />
+                    </FormGroup>
+                    {allCities.map(c => {
+                        // console.log("current city and its id:");
+                        // console.log(`${c.name} ${c.id}`)
 
-                    // console.log("cities which should be checked (should be the same as 'filtered cities'):");
-                    // console.log(updatedWalkerCities);
-                    
-                    const isChecked = updatedWalkerCities.some(city => city.id === c.id);
-                    // console.log(isChecked);
-                    
-                    if (isChecked) {
-                        return <FormGroup check inline key={"city--" + c.id}>
-                            <Input
-                                id="cityCheckbox"
-                                type="checkbox"
-                                checked
-                                onChange={() => {
-                                    handleRemoveCheckbox(c.id, c.name);
-                                }}
-                            />
-                            {' '}
-                            <Label check for="cityCheckbox">
-                            {c.name}
-                            </Label>
-                        </FormGroup>
-                    } else if (!isChecked) {
-                        return <FormGroup check inline key={"city--" + c.id}>
-                            <Input
-                                id={`cityCheckbox-${c.id}`}
-                                type="checkbox"
-                                onChange={() => {
-                                    handleAddCheckbox(c.id, c.name);
-                                }}
-                            />
-                            {' '}
-                            <Label check for={`cityCheckbox-${c.id}`}>
+                        // console.log("cities which should be checked (should be the same as 'filtered cities'):");
+                        // console.log(updatedWalkerCities);
+                        
+                        const isChecked = updatedWalkerCities.some(city => city.id === c.id);
+                        // console.log(isChecked);
+                        
+                        if (isChecked) {
+                            return <FormGroup check inline key={"city--" + c.id}>
+                                <Input
+                                    id="cityCheckbox"
+                                    type="checkbox"
+                                    checked
+                                    onChange={() => {
+                                        handleRemoveCheckbox(c.id, c.name);
+                                    }}
+                                />
+                                {' '}
+                                <Label check for="cityCheckbox">
                                 {c.name}
-                            </Label>
-                        </FormGroup>
-                    }
-                    
-                })}
-                    
-                <div className="button-container">
-                    <Button
-                        color="secondary"
-                        onClick={handleGoBack}
-                    >
-                        Go Back
-                    </Button>
-                    <Button
-                        color="danger"
-                        onClick={toggleModal}
-                    >
-                        Submit Changes
-                    </Button>
-                </div>
-            </Form>
-            <Modal isOpen={modal} toggle={toggleModal}>
-                <ModalHeader toggle={toggleModal}>Confirm these changes?</ModalHeader>
-                <ModalBody>
-                    Walker's Name: <strong>{updatedWalkerName ? updatedWalkerName : walker.name}</strong> <br />      
-                    Cities: <strong>{updatedWalkerCities.length === 0 ? "no assigned cities" : updatedWalkerCities.map(city => `${city.name} `)}</strong>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="secondary" onClick={handleCancelSubmit}>
-                        Nah dog lol
-                    </Button>
-                    <Button color="danger" onClick={handleSubmitWalkerEdits}>
-                        Yes
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        </>
+                                </Label>
+                            </FormGroup>
+                        } else if (!isChecked) {
+                            return <FormGroup check inline key={"city--" + c.id}>
+                                <Input
+                                    id={`cityCheckbox-${c.id}`}
+                                    type="checkbox"
+                                    onChange={() => {
+                                        handleAddCheckbox(c.id, c.name);
+                                    }}
+                                />
+                                {' '}
+                                <Label check for={`cityCheckbox-${c.id}`}>
+                                    {c.name}
+                                </Label>
+                            </FormGroup>
+                        }
+                        
+                    })}
+                        
+                    <div className="button-container">
+                        <Button
+                            color="secondary"
+                            onClick={handleGoBack}
+                        >
+                            Go Back
+                        </Button>
+                        <Button
+                            color="danger"
+                            onClick={toggleModal}
+                        >
+                            Submit Changes
+                        </Button>
+                    </div>
+                </Form>
+                <Modal isOpen={modal} toggle={toggleModal}>
+                    <ModalHeader toggle={toggleModal}>Confirm these changes?</ModalHeader>
+                    <ModalBody>
+                        Walker's Name: <strong>{updatedWalkerName ? updatedWalkerName : walker.name}</strong> <br />      
+                        Cities: <strong>{updatedWalkerCities.length === 0 ? "no assigned cities" : updatedWalkerCities.map(city => `${city.name} `)}</strong>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={handleCancelSubmit}>
+                            Nah dog lol
+                        </Button>
+                        <Button color="danger" onClick={handleSubmitWalkerEdits}>
+                            Yes
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+            </div>
+        </div>
     )
 }

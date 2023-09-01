@@ -49,6 +49,16 @@ export const postDog = async (newDog) => {
   });
 }
 
+export const postCity = async (newCity) => {
+  await fetch(`/cities`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newCity)
+  });
+}
+
 export const postAssignWalker = async (dogId, walkerId) => {
   await fetch(`/dogs/${dogId}/assignWalker${walkerId}`, {
     method: "POST",
