@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getCities, getFilteredWalkers, getWalkers } from "./apiManager";
 import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Offcanvas, OffcanvasBody, OffcanvasHeader } from "reactstrap";
 import { AssignDog } from "./AssignDog";
+import { useNavigate } from "react-router-dom";
 
 export const Walkers = () => {
     const [walkers, setWalkers] = useState([]);
@@ -11,6 +12,7 @@ export const Walkers = () => {
     const [modal, setModal] = useState(false);
     const [selectedWalker, setSelectedWalker] = useState("");
     const [selectedDog, setSelectedDog] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         getWalkers()
@@ -41,6 +43,11 @@ export const Walkers = () => {
                     // console.log(data);
                 })
         }   
+    }
+
+    const handleEditWalker = (walkerId) => {
+        // console.log(`you clicked ${walkerId}`)
+        navigate(`/walkers/edit/${walkerId}`)
     }
 
     const toggleOffCanvas = () => setOffCanvas(!offCanvas);
@@ -81,22 +88,31 @@ export const Walkers = () => {
                         </Input>
                     </FormGroup>
                 </Form>
-            {walkers.map((walker, index) => {
-                return (
-                <div className="walker-container" key={"walker--" + index}>
-                    <h4 ><strong>{walker.name}</strong></h4>
-                    <Button value={walker.name} color="primary" onClick={(e) => {
-                        toggleOffCanvas();
-                        function noRefCheck(){};
-                        setSelectedWalker(e.target.value);
-                        console.log(e.target.value);
-                    }}>
-                        Assign Dog</Button>
-                    <Button color="danger">Fire Walker</Button>
-                </div>
+                <div className="walkersList-container">
+
                 
-                )
-            })}
+                {walkers.map((walker, index) => {
+                    return (
+                    <div className="walker-container" key={"walker--" + index}>
+                        <h4 className="walkerName" onClick={() => {
+                            handleEditWalker(walker.id)}}
+                        >
+                            <strong>{walker.name}</strong>
+                        </h4>
+                        <Button value={walker.name} color="primary" onClick={(e) => {
+                            toggleOffCanvas();
+                            function noRefCheck(){};
+                            setSelectedWalker(e.target.value);
+                            console.log(e.target.value);
+                        }}>
+                            Assign Dog</Button>
+                        <Button color="danger">Fire Walker</Button>
+                    </div>
+                    
+                    
+                    )
+                })}
+                </div>
             </div>
             <Offcanvas 
                 isOpen={offCanvas}

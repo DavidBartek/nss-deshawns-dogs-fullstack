@@ -21,6 +21,12 @@ export const getWalkers = async () => {
   return data;
 }
 
+export const getOneWalker = async (walkerId) => {
+  const res = await fetch(`/walkers/${walkerId}`);
+  const data = res.json();
+  return data;
+}
+
 export const getFilteredWalkers = async (cityId) => {
   const res = await fetch(`/filteredWalkers/${cityId}`);
   const data = res.json();
@@ -50,6 +56,16 @@ export const postAssignWalker = async (dogId, walkerId) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(dogId, walkerId)
+  })
+}
+
+export const putEditWalker = async (walkerId, editedWalker) => {
+  await fetch(`/walkers/${walkerId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(editedWalker)
   })
 }
 
