@@ -71,9 +71,69 @@ app.MapGet("/api/hello", () =>
     return new { Message = "Welcome to DeShawn's Dog Walking" };
 });
 
+// for testing
+app.MapGet("/walkersToCities", () =>
+{
+    return walkersToCities;
+});
+
 app.MapGet("/dogs", () =>
 {
     return dogs;
+});
+
+app.MapPost("/dogs", (Dog newDog) =>
+{
+    newDog.Id = dogs.Count > 0 ? dogs.Max(d => d.Id) + 1 : 1;
+    newDog.WalkerId = null;
+    dogs.Add(newDog);
+    return newDog;
+});
+
+// in Program.cs: cf the "POST" (acting as a "PUT")
+// pass in dogId, walkerId
+// access existing dog by its ID (FirstOrDefault)
+// new body: same + walkerId = foundWalker.id
+// return new dog object
+
+app.MapPost("/dogs/{dogId}/assignWalker{walkerId}", (int dogId, int walkerId) =>
+{
+    Dog foundDog = dogs.FirstOrDefault(d => d.Id == dogId);
+    foundDog.WalkerId = walkerId;
+
+    return foundDog;
+});
+
+app.MapDelete("/dogs/{id}", (int id) =>
+{
+    Dog dogToDestroy = dogs.FirstOrDefault(dog => dog.Id == id);
+    Console.WriteLine(dogToDestroy.Name);
+    Console.WriteLine(dogToDestroy.Id);
+    if (dogToDestroy == null)
+    {
+        return Results.NotFound();
+    }
+    // the below LINQ method (.RemoveAt) will occasionally return errors. It finds by index, when we have been doing operations by Id.
+    // dogs.RemoveAt(id - 1);
+    dogs.RemoveAll(dog => dog.Id == dogToDestroy.Id);
+    return Results.Ok();
+});
+
+// match selected walker name to a walker Id (captured in client, sent to server).
+// filter walkersToCities by walker Id. Return filteredWTC.
+// filter cities by city IDs in filteredWTC. return filteredCities.
+// filter dogs by cityIds present in filteredCities AND walkerId == null. return filteredDogs to client.
+// map over filteredDogs (in client).
+
+app.MapGet("/filteredDogs/{walkerId}", (int walkerId) =>
+{
+    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.WalkerId == walkerId).ToList();
+    // return filteredWalkersToCities;
+    List<City> filteredCities = filteredWalkersToCities.Select(fwtc => cities.First(c => c.Id == fwtc.CityId)).ToList();
+    // return filteredCities;
+    List<Dog> filteredDogs = dogs.Where(d => filteredCities.Any(fc => d.CityId == fc.Id && d.WalkerId == null)).ToList();
+    // List<Dog> filteredDogs = filteredCities.Select(fc => dogs.Where(d => d.CityId == fc.Id));
+    return filteredDogs;
 });
 
 app.MapGet("/cities", () =>
@@ -99,59 +159,29 @@ app.MapGet("/walkers/{walkerId}", (int walkerId) =>
     return Results.Ok(foundWalker);
 });
 
-// single cityId passed in.
-// filter walkersToCities by objects which include cityId; return filteredWalkersToCities
-// construct list of filteredWalkers based on walkerIds present in each filteredWalkersToCities object; return filteredWalkers (assign this to "Walkers" prop)
+// edit walker's details.
+// 
+// 1: handles many-to-many relationship with cities.
+// walker object passed in as argument; contains a cities list embedded.
+// modifies the join table "walkersToCities": DELETES any object containing walkerId.
+// iterates through walker.cities list:
+    // creates a newWTC (type: WalkerToCity) object containing...
+        // WalkerId (from walker object)
+        // CityId (from currently-iterated city in walker.cities)
+        // Id (generated)
+    // adds newWTC to walkerToCities list (for as many relationships as were generated).
+//
+// 2: handles changes to walker's name. (easy - find by id, change property.)
+//
+// 3: handles changes to dogs containing walker's id.
+// iterate through dogs list: isolate dogs where walkerId == walker.Id (.Where)
+    // inside: iterate through walker.Cities list :
+        // if 
 
-app.MapGet("/filteredWalkers/{cityId}", (int cityId) => 
+app.MapPut("/walkers/{walkerId}", (int walkerId, Walker walker) =>
 {
-    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.CityId == cityId).ToList();
-    List<Walker> filteredWalkers = filteredWalkersToCities.Select(fwtc => walkers.First(w => w.Id == fwtc.WalkerId)).ToList();
-    return filteredWalkers;
-});
-
-// match selected walker name to a walker Id (captured in client, sent to server).
-// filter walkersToCities by walker Id. Return filteredWTC.
-// filter cities by city IDs in filteredWTC. return filteredCities.
-// filter dogs by cityIds present in filteredCities AND walkerId == null. return filteredDogs to client.
-// map over filteredDogs (in client).
-
-app.MapGet("/filteredDogs/{walkerId}", (int walkerId) =>
-{
-    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.WalkerId == walkerId).ToList();
-    // return filteredWalkersToCities;
-    List<City> filteredCities = filteredWalkersToCities.Select(fwtc => cities.First(c => c.Id == fwtc.CityId)).ToList();
-    // return filteredCities;
-    List<Dog> filteredDogs = dogs.Where(d => filteredCities.Any(fc => d.CityId == fc.Id && d.WalkerId == null)).ToList();
-    // List<Dog> filteredDogs = filteredCities.Select(fc => dogs.Where(d => d.CityId == fc.Id));
-    return filteredDogs;
-});
-
-app.MapPost("/dogs", (Dog newDog) =>
-{
-    newDog.Id = dogs.Count > 0 ? dogs.Max(d => d.Id) + 1 : 1;
-    newDog.WalkerId = null;
-    dogs.Add(newDog);
-    return newDog;
-});
-
-// in Program.cs: cf the "POST" (acting as a "PUT")
-// pass in dogId, walkerId
-// access existing dog by its ID (FirstOrDefault)
-// new body: same + walkerId = foundWalker.id
-// return new dog object
-
-app.MapPost("/dogs/{dogId}/assignWalker{walkerId}", (int dogId, int walkerId) =>
-{
-    Dog foundDog = dogs.FirstOrDefault(d => d.Id == dogId);
-    foundDog.WalkerId = walkerId;
-
-    return foundDog;
-});
-
-app.MapPut("/walkers/{walkerId}", (Walker walker) =>
-{
-    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.WalkerId != walker.Id).ToList();
+    // modifies walkerToCities for any changes to the cities a walker works.
+    walkersToCities = walkersToCities.Where(wtc => wtc.WalkerId != walker.Id).ToList();
     foreach (City city in walker.Cities)
     {
         WalkerToCity newWTC = new WalkerToCity
@@ -161,23 +191,22 @@ app.MapPut("/walkers/{walkerId}", (Walker walker) =>
             Id = walkersToCities.Count > 0 ? walkersToCities.Max(wtc => wtc.Id) + 1 : 1
         };
         walkersToCities.Add(newWTC);
-        return newWTC;
     }
+    // modifies walker @ id (for any name change)
+    Walker foundWalker = walkers.FirstOrDefault(w => w.Id == walker.Id);
+    foundWalker.Name = walker.Name;
+    return foundWalker;
 });
 
-app.MapDelete("/dogs/{id}", (int id) =>
+// single cityId passed in.
+// filter walkersToCities by objects which include cityId; return filteredWalkersToCities
+// construct list of filteredWalkers based on walkerIds present in each filteredWalkersToCities object; return filteredWalkers (assign this to "Walkers" prop)
+
+app.MapGet("/filteredWalkers/{cityId}", (int cityId) => 
 {
-    Dog dogToDestroy = dogs.FirstOrDefault(dog => dog.Id == id);
-    Console.WriteLine(dogToDestroy.Name);
-    Console.WriteLine(dogToDestroy.Id);
-    if (dogToDestroy == null)
-    {
-        return Results.NotFound();
-    }
-    // the below LINQ method (.RemoveAt) will occasionally return errors. It finds by index, when we have been doing operations by Id.
-    // dogs.RemoveAt(id - 1);
-    dogs.RemoveAll(dog => dog.Id == dogToDestroy.Id);
-    return Results.Ok();
+    List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.CityId == cityId).ToList();
+    List<Walker> filteredWalkers = filteredWalkersToCities.Select(fwtc => walkers.First(w => w.Id == fwtc.WalkerId)).ToList();
+    return filteredWalkers;
 });
 
 app.Run();

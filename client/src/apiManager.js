@@ -59,6 +59,16 @@ export const postAssignWalker = async (dogId, walkerId) => {
   })
 }
 
+export const putEditWalker = async (walkerId, editedWalker) => {
+  await fetch(`/walkers/${walkerId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(editedWalker)
+  })
+}
+
 export const deleteDog = async (dogId) => {
   await fetch(`/dogs/${dogId}`, {
     method: "DELETE"

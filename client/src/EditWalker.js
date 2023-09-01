@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getCities, getOneWalker } from "./apiManager";
+import { getCities, getOneWalker, putEditWalker } from "./apiManager";
 import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 export const EditWalker = () => {
@@ -59,8 +59,14 @@ export const EditWalker = () => {
     }
 
     const handleSubmitWalkerEdits = () => {
-        
-        // PUT operations
+        // construct new walker object to pass to API
+        const newWalkerObj = {
+            id: walkerId,
+            name: updatedWalkerName,
+            cities: updatedWalkerCities
+        }
+        // pass in new walker object, with a nested "cities" array, to API PUT method
+        putEditWalker(walkerId, newWalkerObj)
         toggleModal(false);
         navigate("/walkers");
     }
