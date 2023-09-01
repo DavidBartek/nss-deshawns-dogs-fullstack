@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCities, getFilteredWalkers, getWalkers } from "./apiManager";
+import { deleteWalker, getCities, getFilteredWalkers, getWalkers } from "./apiManager";
 import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Offcanvas, OffcanvasBody, OffcanvasHeader } from "reactstrap";
 import { AssignDog } from "./AssignDog";
 import { useNavigate } from "react-router-dom";
@@ -49,6 +49,16 @@ export const Walkers = () => {
         // console.log(`you clicked ${walkerId}`)
         navigate(`/walkers/edit/${walkerId}`)
     }
+
+    const handleFireWalker = (walkerId) => {
+        deleteWalker(walkerId)
+            .then(() => {
+                getWalkers()
+                    .then((data) => {
+                        setWalkers(data);
+                    });
+            });
+    };
 
     const toggleOffCanvas = () => setOffCanvas(!offCanvas);
 
@@ -103,10 +113,13 @@ export const Walkers = () => {
                             toggleOffCanvas();
                             function noRefCheck(){};
                             setSelectedWalker(e.target.value);
-                            console.log(e.target.value);
+                            // console.log(e.target.value);
                         }}>
                             Assign Dog</Button>
-                        <Button color="danger">Fire Walker</Button>
+                        <Button color="danger" onClick={() => {
+                            handleFireWalker(walker.id);
+                            // console.log(walker.id);
+                        }}>Fire Walker</Button>
                     </div>
                     
                     

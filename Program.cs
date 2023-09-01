@@ -71,7 +71,7 @@ app.MapGet("/api/hello", () =>
     return new { Message = "Welcome to DeShawn's Dog Walking" };
 });
 
-// for testing
+// for testing; not used in client
 app.MapGet("/walkersToCities", () =>
 {
     return walkersToCities;
@@ -240,6 +240,40 @@ app.MapGet("/filteredWalkers/{cityId}", (int cityId) =>
     List<WalkerToCity> filteredWalkersToCities = walkersToCities.Where(wtc => wtc.CityId == cityId).ToList();
     List<Walker> filteredWalkers = filteredWalkersToCities.Select(fwtc => walkers.First(w => w.Id == fwtc.WalkerId)).ToList();
     return filteredWalkers;
+});
+
+app.MapDelete("/walkers/{walkerId}", (int walkerId) =>
+{
+    Walker walkerToFire = walkers.FirstOrDefault(walker => walker.Id == walkerId);
+    // Console.WriteLine(walkerToFire.Name);
+    // Console.WriteLine(walkerToFire.Id);
+    if (walkerToFire == null)
+    {
+        return Results.NotFound();
+    }
+    // the .RemoveAt LINQ method will occasionally return errors. It finds by index, when we have been doing operations by Id.
+    // dogs.RemoveAt(id - 1);
+    
+    // removes walker at given id.
+    walkers.RemoveAll(walker => walker.Id == walkerToFire.Id);
+
+    // reassigns any dogs with found walker Id to walkerId == null.
+    foreach (Dog dog in dogs)
+    {
+        if (dog.WalkerId == walkerToFire.Id)
+        {
+            dog.WalkerId = null;
+        }
+        else
+        {
+            dog.WalkerId = dog.WalkerId;
+        }
+    }
+
+    // removes all walkersToCities objects containing found walker Id.
+    walkersToCities = walkersToCities.Where(wtc => wtc.WalkerId != walkerToFire.Id).ToList();
+
+    return Results.Ok();
 });
 
 app.Run();

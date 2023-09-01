@@ -74,3 +74,9 @@ export const deleteDog = async (dogId) => {
     method: "DELETE"
   })
 }
+
+export const deleteWalker = async (walkerId) => {
+  await fetch(`/walkers/${walkerId}`, {
+    method: "DELETE"
+  })
+}
