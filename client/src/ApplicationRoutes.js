@@ -3,6 +3,7 @@ import Home from "./Home"
 import { AddDog } from "./AddDog"
 import { Walkers } from "./Walkers"
 import { EditWalker } from "./EditWalker"
+import { Cities } from "./Cities"
 
 export const ApplicationRoutes = () => {
     return (
@@ -12,7 +13,7 @@ export const ApplicationRoutes = () => {
             <Route path="dogs/addDog" element = { <AddDog /> } />
             <Route path="walkers" element={ <Walkers /> } />
             <Route path="walkers/edit/:walkerId" element={ <EditWalker /> } />
-            <Route path="cities" element={ <x /> } />
+            <Route path="cities" element={ <Cities /> } />
         </Routes>
     )    
 }
